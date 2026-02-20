@@ -1,10 +1,10 @@
 class GameTeam 
-  attr_reader :game_id, :team_id, :HoA, :result, :settled_in, :head_coach, :goals, :shots, :tackles, :pim, :powerPlayOpportunities, :powerPlayGoals, :faceOffWinPercentage, :giveaways, :takeaways
+  attr_reader :game_id, :team_id, :hoa, :result, :settled_in, :head_coach, :goals, :shots, :tackles, :pim, :powerplayopportunities, :powerplaygoals, :faceoffwinpercentage, :giveaways, :takeaways
 
-  def initialize
+  def initialize(game_id, team_id, goals, hoa, result, tackles, head_coach, shots)
     @game_id = game_id
     @team_id = team_id
-    @HoA = hoa 
+    @hoa = hoa 
     @result = result
     @settled_in = settled_in
     @head_coach = head_coach
@@ -12,9 +12,9 @@ class GameTeam
     @shots = shots
     @tackles = tackles
     @pim = pim 
-    @powerPlayOpportunities = powerPlayOpportunities
-    @powerPlayGoals = powerPlayGoals
-    @faceOffWinPercentage = faceOffWinPercentage
+    @powerplayopportunities = powerplayopportunities
+    @powerplaygoals = powerplaygoals
+    @faceoffwinpercentage = faceoffwinpercentage
     @giveaways = giveaways
     @takeaways = takeaways
   end
