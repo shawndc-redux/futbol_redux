@@ -12,54 +12,63 @@ class StatTracker
   end
 
   
-  def highest_total_score
-    # Highest sum of the winning and losing teams’ scores
-    # return Integer
+  def highest_total_score # Highest sum of the winning and losing teams’ scores
+    total_game_goals.max
   end
   
-  def lowest_total_score
-    # Lowest sum of the winning and losing teams’ scores
-    # return Integer
+  def lowest_total_score # Lowest sum of the winning and losing teams’ scores
+    total_game_goals.min
   end
   
-  def percentage_home_wins
-    # Percentage of games that a home team has won (rounded to the nearest 100th)
-    # return Float
+  def percentage_home_wins # Percentage of games that a home team has won (rounded to the nearest 100th)
+    result_percentages("WIN")
   end
   
-  def percentage_visitor_wins
-    # Percentage of games that a visitor has won (rounded to the nearest 100th)
-    # return Float
+  def percentage_visitor_wins # Percentage of games that a visitor has won (rounded to the nearest 100th)
+    result_percentages("LOSS")
   end
   
-  def percentage_ties
-    # Percentage of games that has resulted in a tie (rounded to the nearest 100th)
-    # return Float
+  def percentage_ties # Percentage of games that has resulted in a tie (rounded to the nearest 100th)
+    result_percentages("TIE")
   end
   
-  def count_of_games_by_season
-    # A hash with season names (e.g. 20122013) as keys and counts of games as values
-    # return Hash
+  def count_of_games_by_season # A hash with season names (e.g. 20122013) as keys and counts of games as values    
+    @games.map {|game| game.season}.tally
   end
   
-  def average_goals_per_game 
-    # Average number of goals scored in a game across all seasons including both home and away goals (rounded to the nearest 100th)
-    # Float
+  def average_goals_per_game # Average number of goals scored in a game across all seasons including both home and away goals (rounded to the nearest 100th)
+    total_game_goals.sum.to_f/total_game_goals.count.to_f
   end
   
   def average_goals_by_season
-    # Average number of goals scored in a game organized in a hash with season names (e.g. 20122013)
-    # as keys and a float representing the average number of goals in a game for that season as values 
-    # (rounded to the nearest 100th)
-    # Hash
+    average_goals = total_season_goals
+    average_goals.map do |season, goals|
+      average_goals[season] = (goals.to_f/count_of_games_by_season[season].to_f).round(2)
+    end
+
+    average_goals
+  end
+
+  def total_season_goals
+    goals = {}
+
+    @games.map do |game|
+      if !goals.keys.include?(game.season)
+        goals[game.season] = (game.away_goals + game.home_goals)
+      else
+        goals[game.season] += (game.away_goals + game.home_goals)
+      end
+    end
+
+    goals
   end
   
   def create_games
     @all_data[:games].each do |row|
        game = Game.new(row[:game_id],
                       row[:season],
-                      row[:away_goals],
-                      row[:home_goals], 
+                      row[:away_goals].to_i,
+                      row[:home_goals].to_i, 
                       row[:away_team_id], 
                       row[:home_team_id] 
                       )
@@ -80,12 +89,12 @@ class StatTracker
     @all_data[:game_teams].each do |row|
       game_team = GameTeam.new(row[:game_id],
                       row[:team_id],
-                      row[:goals], 
+                      row[:goals].to_i, 
                       row[:hoa].strip, 
                       row[:result],
-                      row[:tackles],
+                      row[:tackles].to_i,
                       row[:head_coach],
-                      row[:shots]
+                      row[:shots].to_i
                       )
       @game_teams << game_team
     end
@@ -99,5 +108,16 @@ class StatTracker
       all_data[file_name] = formatted_csv
     end
     StatTracker.new(all_data)
+  end
+
+  def result_percentages(result)
+    all_results = @game_teams.find_all {|gt| gt.hoa == "home" }.map {|game| game.result}
+    total = all_results.length
+    for_specific_result = all_results.tally[result]
+    (for_specific_result.to_f/total.to_f).round(2)
+  end
+
+  def total_game_goals
+    @games.map { |game| game.home_goals + game.away_goals}
   end
 end
