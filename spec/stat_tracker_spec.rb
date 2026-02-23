@@ -54,4 +54,56 @@ RSpec.describe StatTracker do
       end
     end
   end
+
+  describe 'Game Statistics' do
+    describe '#highest_total_score' do
+      it 'returns highest sum of winning and losing teams scores' do
+
+      end
+    end
+
+    skip '#lowest_total_score' do
+      it 'returns Lowest sum of the winning and losing teams scores' do
+
+      end
+    end
+
+    skip '#percentage_home_wins' do
+      it 'returns Percentage of games that a home team has won (rounded to the nearest 100th)' do
+
+      end
+    end
+
+    skip '#percentage_visitor_wins' do
+      it 'returns Percentage of games that a visitor has won (rounded to the nearest 100th)' do
+
+      end
+    end
+
+    skip '#percentage_ties' do
+      it 'returns Percentage of games that has resulted in a tie (rounded to the nearest 100th)' do
+        
+      end
+    end
+
+    skip '#count_of_games_by_season' do
+      it 'returns A hash with season names (e.g. 20122013) as keys and counts of games as values' do
+
+      end
+    end
+
+    skip '#average_goals_per_game' do
+      it 'returns Average number of goals scored in a game across all seasons including both home and away goals (rounded to the nearest 100th)' do
+
+      end
+    end
+
+    skip '#average_goals_by_season' do
+      it 'returns Average number of goals scored in a game organized in a hash with season names
+        as keys and a float representing the average number of goals in a game for that season 
+        as values (rounded to the nearest 100th)' do
+
+      end
+    end
+  end
 end
