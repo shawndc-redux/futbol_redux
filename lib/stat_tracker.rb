@@ -11,7 +11,8 @@ class StatTracker
     create_game_teams
   end
 
-  
+  # GAME STATISTICS
+  # *****************************
   def highest_total_score # Highest sum of the winning and losing teams’ scores
     total_game_goals.max
   end
@@ -48,6 +49,33 @@ class StatTracker
 
     average_goals
   end
+
+  # LEAGUE STATISTICS
+  # *****************************
+  def best_offense
+    
+  end
+
+  def worst_offense
+
+  end
+
+  def highest_scoring_visitor
+
+  end
+
+  def highest_scoring_home_team
+
+  end
+
+  def lowest_scoring_visitor
+
+  end
+
+  def lowest_scoring_home_team
+
+  end
+
 
   def total_season_goals
     goals = {}
