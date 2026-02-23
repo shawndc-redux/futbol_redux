@@ -98,23 +98,29 @@ RSpec.describe StatTracker do
       end
     end
 
-    skip '#count_of_games_by_season' do
+    describe '#count_of_games_by_season' do
       it 'returns A hash with season names (e.g. 20122013) as keys and counts of games as values' do
-
+        expect(@stats.count_of_games_by_season).to be_a_instance_of Hash
+        @stats.count_of_games_by_season.each do |season, count|
+          expect(season.to_i).to be_a_instance_of Integer
+          expect(season).to eq("20122013").or eq("20152016").or eq("20162017").or eq("20172018")
+          expect(count).to be_a_instance_of Integer
+          expect(count).to be < 50
+        end
       end
     end
 
-    skip '#average_goals_per_game' do
+    describe '#average_goals_per_game' do
       it 'returns Average number of goals scored in a game across all seasons including both home and away goals (rounded to the nearest 100th)' do
         expect(@stats.average_goals_per_game).to be_a_instance_of Float
       end
     end
 
-    skip '#average_goals_by_season' do
+    describe '#average_goals_by_season' do
       it 'returns Average number of goals scored in a game organized in a hash with season names
         as keys and a float representing the average number of goals in a game for that season 
         as values (rounded to the nearest 100th)' do
-
+          expect(@stats.average_goals_by_season).to be_a_instance_of Hash
       end
     end
   end

@@ -26,10 +26,8 @@ class StatTracker
   end
 
   
-  def percentage_home_wins
+  def percentage_home_wins # Percentage of games that a home team has won (rounded to the nearest 100th)
     result_percentages("WIN")
-    # Percentage of games that a home team has won (rounded to the nearest 100th)
-    # return Float
   end
   
   def percentage_visitor_wins # Percentage of games that a visitor has won (rounded to the nearest 100th)
@@ -48,9 +46,8 @@ class StatTracker
     (for_specific_result.to_f/total.to_f).round(2)
   end
   
-  def count_of_games_by_season
-    # A hash with season names (e.g. 20122013) as keys and counts of games as values
-    # return Hash
+  def count_of_games_by_season # A hash with season names (e.g. 20122013) as keys and counts of games as values    
+    @games.map {|game| game.season}.tally
   end
   
   def average_goals_per_game 
