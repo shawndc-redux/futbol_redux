@@ -81,7 +81,7 @@ class StatTracker
       game_team = GameTeam.new(row[:game_id],
                       row[:team_id],
                       row[:goals], 
-                      row[:hoa], 
+                      row[:hoa].strip, 
                       row[:result],
                       row[:tackles],
                       row[:head_coach],
@@ -93,6 +93,7 @@ class StatTracker
   end
   
   def self.from_csv(locations)
+    all_data = {}
     locations.each do |file_name, location|
       formatted_csv = CSV.open location, headers: true, header_converters: :symbol
       all_data[file_name] = formatted_csv
