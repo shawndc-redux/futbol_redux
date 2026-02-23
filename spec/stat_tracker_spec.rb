@@ -58,31 +58,43 @@ RSpec.describe StatTracker do
   describe 'Game Statistics' do
     describe '#highest_total_score' do
       it 'returns highest sum of winning and losing teams scores' do
-
+        expect(@stats.highest_total_score).to be_a_instance_of Integer
       end
     end
-
-    skip '#lowest_total_score' do
+    
+    describe '#lowest_total_score' do
       it 'returns Lowest sum of the winning and losing teams scores' do
-
-      end
-    end
-
-    skip '#percentage_home_wins' do
-      it 'returns Percentage of games that a home team has won (rounded to the nearest 100th)' do
-
-      end
-    end
-
-    skip '#percentage_visitor_wins' do
-      it 'returns Percentage of games that a visitor has won (rounded to the nearest 100th)' do
-
-      end
-    end
-
-    skip '#percentage_ties' do
-      it 'returns Percentage of games that has resulted in a tie (rounded to the nearest 100th)' do
+        expect(@stats.lowest_total_score).to be_a_instance_of Integer
+        expect(@stats.lowest_total_score).to eq 0
         
+      end
+  end
+  
+    describe '#percentage_home_wins' do
+      it 'returns Percentage of games that a home team has won (rounded to the nearest 100th)' do
+        expect(@stats.percentage_home_wins).to be_a_instance_of Float
+        expect(@stats.percentage_home_wins).to eq 0.48
+
+        end
+    end
+
+    describe '#percentage_visitor_wins' do
+      it 'returns Percentage of games that a visitor has won (rounded to the nearest 100th)' do
+        expect(@stats.percentage_visitor_wins).to be_a_instance_of Float
+        expect(@stats.percentage_visitor_wins).to eq 0.39
+      end
+    end
+
+    describe '#percentage_ties' do
+      it 'returns Percentage of games that has resulted in a tie (rounded to the nearest 100th)' do
+        expect(@stats.percentage_ties).to be_a_instance_of Float
+        expect(@stats.percentage_ties).to eq 0.13
+      end
+
+      it 'totals 100' do
+        expect(@stats.percentage_ties + 
+          @stats.percentage_visitor_wins + 
+          @stats.percentage_home_wins).to eq 1.0
       end
     end
 
@@ -94,7 +106,7 @@ RSpec.describe StatTracker do
 
     skip '#average_goals_per_game' do
       it 'returns Average number of goals scored in a game across all seasons including both home and away goals (rounded to the nearest 100th)' do
-
+        expect(@stats.average_goals_per_game).to be_a_instance_of Float
       end
     end
 
