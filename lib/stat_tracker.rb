@@ -41,10 +41,26 @@ class StatTracker
   end
   
   def average_goals_by_season
-    # Average number of goals scored in a game organized in a hash with season names (e.g. 20122013)
-    # as keys and a float representing the average number of goals in a game for that season as values 
-    # (rounded to the nearest 100th)
-    # Hash
+    average_goals = total_season_goals
+    average_goals.map do |season, goals|
+      average_goals[season] = (goals.to_f/count_of_games_by_season[season].to_f).round(2)
+    end
+
+    average_goals
+  end
+
+  def total_season_goals
+    goals = {}
+
+    @games.map do |game|
+      if !goals.keys.include?(game.season)
+        goals[game.season] = (game.away_goals + game.home_goals)
+      else
+        goals[game.season] += (game.away_goals + game.home_goals)
+      end
+    end
+
+    goals
   end
   
   def create_games
