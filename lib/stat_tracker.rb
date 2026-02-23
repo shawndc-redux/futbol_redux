@@ -12,29 +12,40 @@ class StatTracker
   end
 
   
-  def highest_total_score
-    # Highest sum of the winning and losing teams’ scores
-    # return Integer
+  def highest_total_score # Highest sum of the winning and losing teams’ scores
+    @games.map do |game|
+      game.home_goals + game.away_goals
+    end.max
   end
   
   def lowest_total_score
     # Lowest sum of the winning and losing teams’ scores
-    # return Integer
+    @games.map do |game|
+      game.home_goals + game.away_goals
+    end.min
   end
+
   
   def percentage_home_wins
+    result_percentages("WIN")
     # Percentage of games that a home team has won (rounded to the nearest 100th)
     # return Float
   end
   
-  def percentage_visitor_wins
-    # Percentage of games that a visitor has won (rounded to the nearest 100th)
-    # return Float
+  def percentage_visitor_wins # Percentage of games that a visitor has won (rounded to the nearest 100th)
+    result_percentages("LOSS")
   end
   
-  def percentage_ties
-    # Percentage of games that has resulted in a tie (rounded to the nearest 100th)
-    # return Float
+  def percentage_ties # Percentage of games that has resulted in a tie (rounded to the nearest 100th)
+    result_percentages("TIE")
+  end
+
+  def result_percentages(result)
+    all_results = @game_teams.find_all {|gt| gt.hoa == "home" }.map {|game| game.result}
+    total = all_results.length
+    for_specific_result = all_results.tally[result]
+    # binding.pry
+    (for_specific_result.to_f/total.to_f).round(2)
   end
   
   def count_of_games_by_season
@@ -58,8 +69,8 @@ class StatTracker
     @all_data[:games].each do |row|
        game = Game.new(row[:game_id],
                       row[:season],
-                      row[:away_goals],
-                      row[:home_goals], 
+                      row[:away_goals].to_i,
+                      row[:home_goals].to_i, 
                       row[:away_team_id], 
                       row[:home_team_id] 
                       )
@@ -80,12 +91,12 @@ class StatTracker
     @all_data[:game_teams].each do |row|
       game_team = GameTeam.new(row[:game_id],
                       row[:team_id],
-                      row[:goals], 
+                      row[:goals].to_i, 
                       row[:hoa].strip, 
                       row[:result],
-                      row[:tackles],
+                      row[:tackles].to_i,
                       row[:head_coach],
-                      row[:shots]
+                      row[:shots].to_i
                       )
       @game_teams << game_team
     end
