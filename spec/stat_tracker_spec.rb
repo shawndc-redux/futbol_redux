@@ -112,6 +112,7 @@ RSpec.describe StatTracker do
 
     describe '#average_goals_per_game' do
       it 'returns Average number of goals scored in a game across all seasons including both home and away goals (rounded to the nearest 100th)' do
+        # binding.pry
         expect(@stats.average_goals_per_game).to be_a_instance_of Float
       end
     end
