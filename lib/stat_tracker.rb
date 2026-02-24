@@ -81,7 +81,7 @@ class StatTracker
   end
 
   def worst_offense
-
+    average_goals_by_team.min_by {|k, v| v}[0]
   end
 
   def highest_scoring_visitor

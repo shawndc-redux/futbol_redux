@@ -146,7 +146,8 @@ RSpec.describe StatTracker do
 
     describe '#worst_offense' do
     	it 'returns Name of the team with the lowest average number of goals scored per game across all seasons as a String' do
-
+        expect(@stats.worst_offense).to be_a_instance_of String
+        expect(@stats.worst_offense).to eq("Sporting Kansas City")
     	end
     end
 
