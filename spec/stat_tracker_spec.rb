@@ -139,7 +139,8 @@ RSpec.describe StatTracker do
 
     describe '#best_offense' do
     	it 'returns Name of the team with the highest average number of goals scored per game across all seasons as a	String' do
-
+        expect(@stats.best_offense).to be_a_instance_of String
+        expect(@stats.best_offense).to eq("Los Angeles FC")
     	end
     end
 

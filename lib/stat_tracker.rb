@@ -56,8 +56,28 @@ class StatTracker
     @teams.count
   end
 
-  def best_offense
+  def average_goals_by_team
+    team_goals = {}
+    ttl_team_games = @game_teams.map {|gt| gt.team_id}.tally
+    team_avgs = {}
 
+    @game_teams.map do |game_team| 
+      if !team_goals.keys.include?(game_team.team_id)
+        team_goals[game_team.team_id] = game_team.goals
+      else
+        team_goals[game_team.team_id] += game_team.goals
+      end
+    end
+
+    team_goals.map do |k, v|
+      team_avgs[@teams.find {|team| team.team_id == k}.team_name] = (v.to_f/(ttl_team_games[k].to_f)).round(2)
+    end
+
+    team_avgs
+  end
+  
+  def best_offense # find avg # of goals scored /game for all teams
+    average_goals_by_team.max_by {|k, v| v}[0]
   end
 
   def worst_offense
