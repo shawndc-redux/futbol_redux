@@ -38,7 +38,7 @@ class StatTracker
   end
   
   def average_goals_per_game # Average number of goals scored in a game across all seasons including both home and away goals (rounded to the nearest 100th)
-    total_game_goals.sum.to_f/total_game_goals.count.to_f
+    (total_game_goals.sum.to_f/total_game_goals.count.to_f).round(2)
   end
   
   def average_goals_by_season
@@ -56,12 +56,55 @@ class StatTracker
     @teams.count
   end
 
-  def average_goals_by_team
-    team_goals = {}
-    ttl_team_games = @game_teams.map {|gt| gt.team_id}.tally
+  def best_offense # find avg # of goals scored /game for all teams
+    average_goals_by_team(@game_teams).max_by {|k, v| v}[0]
+  end
+
+  def worst_offense
+    average_goals_by_team(@game_teams).min_by {|k, v| v}[0]
+  end
+
+  def highest_scoring_visitor
+    visitor_games = @game_teams.find_all {|game_team| game_team.hoa == "away" }
+    average_goals_by_team(visitor_games).max_by {|k, v| v}[0]
+  end
+
+  def highest_scoring_home_team
+    home_games = @game_teams.find_all {|game_team| game_team.hoa == "home" }
+    average_goals_by_team(home_games).max_by {|k, v| v}[0]
+  end
+
+  def lowest_scoring_visitor
+    home_games = @game_teams.find_all {|game_team| game_team.hoa == "away" }
+    average_goals_by_team(home_games).min_by {|k, v| v}[0]
+  end
+
+  def lowest_scoring_home_team
+    home_games = @game_teams.find_all {|game_team| game_team.hoa == "home" }
+    average_goals_by_team(home_games).min_by {|k, v| v}[0]
+  end
+
+  # LEAGUE STATS -- HELPER METHODS
+  # ******************************
+  def average_goals_by_team(game_teams)
+    team_goals = all_goals_per_team(game_teams)
+    ttl_team_games = total_games_per_team(game_teams)
     team_avgs = {}
 
-    @game_teams.map do |game_team| 
+    team_goals.map do |k, v|
+      team_avgs[@teams.find {|team| team.team_id == k}.team_name] = (v.to_f/(ttl_team_games[k].to_f)).round(2)
+    end
+    team_avgs
+  end
+
+  def total_games_per_team(game_teams)
+    game_teams.map {|gt| gt.team_id}.tally
+  end
+
+  def all_goals_per_team(game_teams)
+    team_goals = {}
+
+    game_teams.map do |game_team| 
       if !team_goals.keys.include?(game_team.team_id)
         team_goals[game_team.team_id] = game_team.goals
       else
@@ -69,37 +112,8 @@ class StatTracker
       end
     end
 
-    team_goals.map do |k, v|
-      team_avgs[@teams.find {|team| team.team_id == k}.team_name] = (v.to_f/(ttl_team_games[k].to_f)).round(2)
-    end
-
-    team_avgs
+    team_goals
   end
-  
-  def best_offense # find avg # of goals scored /game for all teams
-    average_goals_by_team.max_by {|k, v| v}[0]
-  end
-
-  def worst_offense
-    average_goals_by_team.min_by {|k, v| v}[0]
-  end
-
-  def highest_scoring_visitor
-
-  end
-
-  def highest_scoring_home_team
-
-  end
-
-  def lowest_scoring_visitor
-
-  end
-
-  def lowest_scoring_home_team
-
-  end
-
 
   def total_season_goals
     goals = {}
@@ -115,6 +129,8 @@ class StatTracker
     goals
   end
   
+  # CSV PARSING -- HELPER METHODS
+  # *****************************
   def create_games
     @all_data[:games].each do |row|
        game = Game.new(row[:game_id],
@@ -162,6 +178,8 @@ class StatTracker
     StatTracker.new(all_data)
   end
 
+  # GAME STATS -- HELPER METHODS
+  # ****************************
   def result_percentages(result)
     all_results = @game_teams.find_all {|gt| gt.hoa == "home" }.map {|game| game.result}
     total = all_results.length
