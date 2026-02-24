@@ -179,4 +179,43 @@ RSpec.describe StatTracker do
     	end
     end
   end
+
+  describe 'Season Statistics' do
+    describe '#winningest_coach' do
+    	it 'returns Name of the Coach with the best win percentage for the season as a String' do
+        expect(@stats.winningest_coach).to be_a_instance_of String
+    	end
+    end
+
+    describe '#worst_coach' do
+    	it 'returns Name of the Coach with the worst win percentage for the season as a	String' do
+        expect(@stats.worst_coach).to be_a_instance_of String
+    	end
+    end
+
+    describe '#most_accurate_team' do
+    	it 'returns Name of the Team with the best ratio of shots to goals for the season as a String' do
+        expect(@stats.most_accurate_team).to be_a_instance_of String
+    	end
+    end
+
+    describe '#least_accurate_team' do
+    	it 'returns Name of the Team with the worst ratio of shots to goals for the season as a	String' do
+        expect(@stats.least_accurate_team).to be_a_instance_of String
+    	end
+
+    end 
+
+    describe '#most_tackles' do
+    	it 'returns Name of the Team with the most tackles in the season as a	String' do
+        expect(@stats.most_tackles).to be_a_instance_of String
+    	end
+    end
+
+    describe '#fewest_tackles' do
+    	it 'returns Name of the Team with the fewest tackles in the season as a	String' do
+        expect(@stats.fewest_tackles).to be_a_instance_of String
+    	end
+    end
+  end
 end

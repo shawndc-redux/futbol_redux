@@ -84,6 +84,32 @@ class StatTracker
     average_goals_by_team(home_games).min_by {|k, v| v}[0]
   end
 
+  # SEASON STATISTICS
+  # *****************************
+  def winningest_coach
+    
+  end
+
+  def worst_coach
+
+  end
+
+  def most_accurate_team
+
+  end
+
+  def least_accurate_team
+
+  end
+
+  def most_tackles
+
+  end
+
+  def fewest_tackles
+
+  end
+
   # LEAGUE STATS -- HELPER METHODS
   # ******************************
   def average_goals_by_team(game_teams)
