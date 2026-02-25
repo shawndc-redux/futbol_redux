@@ -1,4 +1,13 @@
+require 'game_helper'
+require 'league_helper'
+require 'season_helper'
+require 'csv_helper'
+
 class StatTracker
+  include GameHelper
+  include LeagueHelper
+  include SeasonHelper
+  include CsvHelper
   attr_reader :all_data, :games, :game_teams, :teams
 
   def initialize(all_data)
@@ -9,6 +18,15 @@ class StatTracker
     create_games
     create_teams
     create_game_teams
+  end
+
+  def self.from_csv(locations)
+    all_data = {}
+    locations.each do |file_name, location|
+      formatted_csv = CSV.open location, headers: true, header_converters: :symbol
+      all_data[file_name] = formatted_csv
+    end
+    StatTracker.new(all_data)
   end
 
   # GAME STATISTICS
@@ -86,68 +104,12 @@ class StatTracker
 
   # SEASON STATISTICS
   # *****************************
-  def team_wins(teams)
-    wins = {}
-    teams.each do |gt|
-      if !wins.keys.include?(gt.head_coach) && gt.result == "WIN"
-        wins[gt.head_coach] = 1
-      elsif !wins.keys.include?(gt.head_coach) && gt.result == ("LOSS" || "TIE")
-        wins[gt.head_coach] = 0
-      elsif wins.keys.include?(gt.head_coach) && gt.result == "WIN"
-        wins[gt.head_coach] += 1
-      end
-    end
-
-    wins
-  end
-
-  def season_game_teams(season_id)
-    @game_teams.find_all {|gt| gt.game_id[0,4] == season_id[0,4]}
-  end
-
-  def team_win_percentages(season_id)
-    teams = season_game_teams(season_id)
-    team_total_games = teams.map {|gt| gt.head_coach}.tally
-    percentages = {}
-    wins = team_wins(teams)
-
-    wins.each do |coach, win_total|
-      percentages[coach] = (win_total.to_f/team_total_games[coach].to_f)
-    end
-
-    percentages
-  end
-
-  def winningest_coach(season_id)
+  def winningest_coach(season_id) # coach with best win percentage
     @game_teams.find {|gt| gt.head_coach == team_win_percentages(season_id).key(team_win_percentages(season_id).values.max)}.head_coach
   end
 
-  def worst_coach(season_id)
+  def worst_coach(season_id) # coach with worst win percentage
     @game_teams.find {|gt| gt.head_coach == team_win_percentages(season_id).key(team_win_percentages(season_id).values.min)}.head_coach
-  end
-
-  def team_goal_shots(game_teams)
-    tgs = {}
-    game_teams.each do |gt|
-      if tgs[gt.team_id].nil?
-        tgs[gt.team_id] = []
-        tgs[gt.team_id][0] = gt.goals
-        tgs[gt.team_id][1] = gt.shots
-      else
-        tgs[gt.team_id][0] += gt.goals
-        tgs[gt.team_id][1] += gt.shots
-      end
-    end
-
-    tgs
-  end
-
-  def team_goal_shots_ratios(game_teams)
-    tgs_ratios = {}
-  
-    team_goal_shots(game_teams).each { |team, goal_shots| tgs_ratios[team] = (goal_shots[0].to_f/goal_shots[1].to_f)}
-
-    tgs_ratios
   end
 
   def most_accurate_team(season_id) # Team with the best ratio of shots to goals for the season
@@ -164,19 +126,6 @@ class StatTracker
     @teams.find {|team| team.team_id == tgs_ratios.min_by {|k, v| v}[0]}.team_name
   end
 
-  def team_tackles(game_teams)
-    teams_tackles = {}
-    game_teams.each do |gt|
-      if teams_tackles[gt.team_id].nil?
-        teams_tackles[gt.team_id] = gt.tackles
-      else
-        teams_tackles[gt.team_id] += gt.tackles
-      end
-    end
-
-    teams_tackles
-  end
-
   def most_tackles(season_id) # Name of the Team with the most tackles in the season
     game_teams = season_game_teams(season_id)
     teams_tackles = team_tackles(game_teams)
@@ -191,110 +140,7 @@ class StatTracker
     @teams.find {|team| team.team_id == teams_tackles.min_by {|k, v| v}[0]}.team_name
   end
 
-  # LEAGUE STATS -- HELPER METHODS
-  # ******************************
-  def average_goals_by_team(game_teams)
-    team_goals = all_goals_per_team(game_teams)
-    ttl_team_games = total_games_per_team(game_teams)
-    team_avgs = {}
-
-    team_goals.map do |k, v|
-      team_avgs[@teams.find {|team| team.team_id == k}.team_name] = (v.to_f/(ttl_team_games[k].to_f)).round(2)
-    end
-    team_avgs
-  end
-
-  def total_games_per_team(game_teams)
-    game_teams.map {|gt| gt.team_id}.tally
-  end
-
-  def all_goals_per_team(game_teams)
-    team_goals = {}
-
-    game_teams.map do |game_team| 
-      if !team_goals.keys.include?(game_team.team_id)
-        team_goals[game_team.team_id] = game_team.goals
-      else
-        team_goals[game_team.team_id] += game_team.goals
-      end
-    end
-
-    team_goals
-  end
-
-  def total_season_goals
-    goals = {}
-
-    @games.map do |game|
-      if !goals.keys.include?(game.season)
-        goals[game.season] = (game.away_goals + game.home_goals)
-      else
-        goals[game.season] += (game.away_goals + game.home_goals)
-      end
-    end
-
-    goals
-  end
-  
-  # CSV PARSING -- HELPER METHODS
+  # CSV PARSING
   # *****************************
-  def create_games
-    @all_data[:games].each do |row|
-       game = Game.new(row[:game_id],
-                      row[:season],
-                      row[:away_goals].to_i,
-                      row[:home_goals].to_i, 
-                      row[:away_team_id], 
-                      row[:home_team_id] 
-                      )
-      @games << game
-    end
-    @games
-  end
   
-  def create_teams
-    @all_data[:teams].each do |row|
-      team = Team.new(row[:team_id], row[:teamname])
-      @teams << team
-    end
-    @teams
-  end
-  
-  def create_game_teams
-    @all_data[:game_teams].each do |row|
-      game_team = GameTeam.new(row[:game_id],
-                      row[:team_id],
-                      row[:goals].to_i, 
-                      row[:hoa].strip, 
-                      row[:result],
-                      row[:tackles].to_i,
-                      row[:head_coach],
-                      row[:shots].to_i
-                      )
-      @game_teams << game_team
-    end
-    @game_teams
-  end
-  
-  def self.from_csv(locations)
-    all_data = {}
-    locations.each do |file_name, location|
-      formatted_csv = CSV.open location, headers: true, header_converters: :symbol
-      all_data[file_name] = formatted_csv
-    end
-    StatTracker.new(all_data)
-  end
-
-  # GAME STATS -- HELPER METHODS
-  # ****************************
-  def result_percentages(result)
-    all_results = @game_teams.find_all {|gt| gt.hoa == "home" }.map {|game| game.result}
-    total = all_results.length
-    for_specific_result = all_results.tally[result]
-    (for_specific_result.to_f/total.to_f).round(2)
-  end
-
-  def total_game_goals
-    @games.map { |game| game.home_goals + game.away_goals}
-  end
 end
