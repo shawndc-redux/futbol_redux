@@ -166,19 +166,24 @@ class StatTracker
     @teams.find {|team| team.team_id == tgs_ratios.min_by {|k, v| v}[0]}.team_name
   end
 
-  def most_tackles(season_id) # Name of the Team with the most tackles in the season
-    game_teams = season_game_teams(season_id)
-
-    team_tackles = {}
+  def team_tackles(game_teams)
+    teams_tackles = {}
     game_teams.each do |gt|
-      if team_tackles[gt.team_id].nil?
-        team_tackles[gt.team_id] = gt.tackles
+      if teams_tackles[gt.team_id].nil?
+        teams_tackles[gt.team_id] = gt.tackles
       else
-        team_tackles[gt.team_id] += gt.tackles
+        teams_tackles[gt.team_id] += gt.tackles
       end
     end
 
-    @teams.find {|team| team.team_id == team_tackles.max_by {|k, v| v}[0]}.team_name
+    teams_tackles
+  end
+
+  def most_tackles(season_id) # Name of the Team with the most tackles in the season
+    game_teams = season_game_teams(season_id)
+    teams_tackles = team_tackles(game_teams)
+
+    @teams.find {|team| team.team_id == teams_tackles.max_by {|k, v| v}[0]}.team_name
   end
 
   def fewest_tackles(season_id)
