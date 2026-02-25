@@ -99,10 +99,6 @@ class StatTracker
     wins
   end
 
-  def season_by_game_id(game_team)
-    @games.find {|game| game.game_id == game_team.game_id}.season
-  end
-
   def season_game_teams(season_id)
     @game_teams.find_all {|gt| gt.game_id[0,4] == season_id[0,4]}
   end
@@ -187,7 +183,10 @@ class StatTracker
   end
 
   def fewest_tackles(season_id)
+    game_teams = season_game_teams(season_id)
+    teams_tackles = team_tackles(game_teams)
 
+    @teams.find {|team| team.team_id == teams_tackles.min_by {|k, v| v}[0]}.team_name
   end
 
   # LEAGUE STATS -- HELPER METHODS
