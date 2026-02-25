@@ -86,27 +86,53 @@ class StatTracker
 
   # SEASON STATISTICS
   # *****************************
-  def winningest_coach
-    
+  def team_wins(season_id)
+    wins = {}
+    @game_teams.each do |gt|
+      if gt.game_id.start_with?(season_id[0,4])
+        if !wins.keys.include?(gt.team_id) && gt.result == "WIN"
+          wins[gt.team_id] = 1
+        elsif wins.keys.include?(gt.team_id) && gt.result == "WIN"
+          wins[gt.team_id] += 1
+        end
+      end
+    end
+
+    wins
   end
 
-  def worst_coach
+  def team_win_percentages(season_id)
+    team_total_games = total_games_per_team(@game_teams)
+    percentages = {}
+
+    team_wins(season_id).each do |id, wins|
+      percentages[id] = (wins.to_f/team_total_games[id].to_f).round(2)
+    end
+
+    percentages
+  end
+
+  def winningest_coach(season_id)
+    @game_teams.find {|gt| gt.team_id == team_win_percentages(season_id).key(team_win_percentages(season_id).values.max)}.head_coach
+  end
+
+  def worst_coach(season_id)
 
   end
 
-  def most_accurate_team
+  def most_accurate_team(season_id)
 
   end
 
-  def least_accurate_team
+  def least_accurate_team(season_id)
 
   end
 
-  def most_tackles
+  def most_tackles(season_id)
 
   end
 
-  def fewest_tackles
+  def fewest_tackles(season_id)
 
   end
 
