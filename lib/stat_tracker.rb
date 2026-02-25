@@ -86,38 +86,42 @@ class StatTracker
 
   # SEASON STATISTICS
   # *****************************
-  def team_wins(season_id)
+  def team_wins(teams)
     wins = {}
-    @game_teams.each do |gt|
-      if gt.game_id.start_with?(season_id[0,4])
-        if !wins.keys.include?(gt.team_id) && gt.result == "WIN"
-          wins[gt.team_id] = 1
-        elsif wins.keys.include?(gt.team_id) && gt.result == "WIN"
-          wins[gt.team_id] += 1
-        end
+    teams.each do |gt|
+      if !wins.keys.include?(gt.head_coach) && gt.result == "WIN"
+        wins[gt.head_coach] = 1
+      elsif wins.keys.include?(gt.head_coach) && gt.result == "WIN"
+        wins[gt.head_coach] += 1
       end
     end
 
     wins
   end
 
+  def season_by_game_id(game_team)
+    @games.find {|game| game.game_id == game_team.game_id}.season
+  end
+
   def team_win_percentages(season_id)
-    team_total_games = total_games_per_team(@game_teams)
+    teams = @game_teams.find_all {|gt| gt.game_id[0,4] == season_id[0,4]}
+    team_total_games = teams.map {|gt| gt.head_coach}.tally
     percentages = {}
+    wins = team_wins(teams)
 
-    team_wins(season_id).each do |id, wins|
-      percentages[id] = (wins.to_f/team_total_games[id].to_f).round(2)
+    wins.each do |coach, win_total|
+      percentages[coach] = (win_total.to_f/team_total_games[coach].to_f)
     end
-
+    
     percentages
   end
 
   def winningest_coach(season_id)
-    @game_teams.find {|gt| gt.team_id == team_win_percentages(season_id).key(team_win_percentages(season_id).values.max)}.head_coach
+    @game_teams.find {|gt| gt.head_coach == team_win_percentages(season_id).key(team_win_percentages(season_id).values.max)}.head_coach
   end
 
   def worst_coach(season_id)
-
+    @game_teams.find {|gt| gt.head_coach == team_win_percentages(season_id).key(team_win_percentages(season_id).values.min)}.head_coach
   end
 
   def most_accurate_team(season_id)
