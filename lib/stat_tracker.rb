@@ -128,23 +128,35 @@ class StatTracker
     @game_teams.find {|gt| gt.head_coach == team_win_percentages(season_id).key(team_win_percentages(season_id).values.min)}.head_coach
   end
 
-  def most_accurate_team(season_id) # Team with the best ratio of shots to goals for the season
-    game_teams = season_game_teams(season_id)
-    team_goal_shots = {}
+  def team_goal_shots(game_teams)
+    tgs = {}
     game_teams.each do |gt|
-      if team_goal_shots[gt.team_id].nil?
-        team_goal_shots[gt.team_id] = []
-        team_goal_shots[gt.team_id][0] = gt.goals
-        team_goal_shots[gt.team_id][1] = gt.shots
+      if tgs[gt.team_id].nil?
+        tgs[gt.team_id] = []
+        tgs[gt.team_id][0] = gt.goals
+        tgs[gt.team_id][1] = gt.shots
       else
-        team_goal_shots[gt.team_id][0] += gt.goals
-        team_goal_shots[gt.team_id][1] += gt.shots
+        tgs[gt.team_id][0] += gt.goals
+        tgs[gt.team_id][1] += gt.shots
       end
     end
 
-    stg_ratios = {}
-    team_goal_shots.each { |team, goal_shots| stg_ratios[team] = (goal_shots[0].to_f/goal_shots[1].to_f)}
-    @teams.find {|team| team.team_id == stg_ratios.max_by {|k, v| v}[0]}.team_name
+    tgs
+  end
+
+  def team_goal_shots_ratios(game_teams)
+    tgs_ratios = {}
+  
+    team_goal_shots(game_teams).each { |team, goal_shots| tgs_ratios[team] = (goal_shots[0].to_f/goal_shots[1].to_f)}
+
+    tgs_ratios
+  end
+
+  def most_accurate_team(season_id) # Team with the best ratio of shots to goals for the season
+    game_teams = season_game_teams(season_id)
+    tgs_ratios = team_goal_shots_ratios(game_teams)
+
+    @teams.find {|team| team.team_id == tgs_ratios.max_by {|k, v| v}[0]}.team_name
   end
 
   def least_accurate_team(season_id) # Team with the worst ratio of shots to goals for the season
