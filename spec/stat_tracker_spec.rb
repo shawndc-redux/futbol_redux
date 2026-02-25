@@ -201,28 +201,28 @@ RSpec.describe StatTracker do
     	end
     end
 
-    skip '#most_accurate_team' do
+    describe '#most_accurate_team' do
     	it 'returns Name of the Team with the best ratio of shots to goals for the season as a String' do
-        expect(@stats.most_accurate_team).to be_a_instance_of String
+        expect(@stats.most_accurate_team("20122013")).to be_a_instance_of String
     	end
     end
 
     skip '#least_accurate_team' do
     	it 'returns Name of the Team with the worst ratio of shots to goals for the season as a	String' do
-        expect(@stats.least_accurate_team).to be_a_instance_of String
+        expect(@stats.least_accurate_team("20122013")).to be_a_instance_of String
     	end
 
     end 
 
     skip '#most_tackles' do
     	it 'returns Name of the Team with the most tackles in the season as a	String' do
-        expect(@stats.most_tackles).to be_a_instance_of String
+        expect(@stats.most_tackles("20122013")).to be_a_instance_of String
     	end
     end
 
     skip '#fewest_tackles' do
     	it 'returns Name of the Team with the fewest tackles in the season as a	String' do
-        expect(@stats.fewest_tackles).to be_a_instance_of String
+        expect(@stats.fewest_tackles("20122013")).to be_a_instance_of String
     	end
     end
   end
