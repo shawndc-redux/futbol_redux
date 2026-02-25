@@ -160,7 +160,10 @@ class StatTracker
   end
 
   def least_accurate_team(season_id) # Team with the worst ratio of shots to goals for the season
+    game_teams = season_game_teams(season_id)
+    tgs_ratios = team_goal_shots_ratios(game_teams)
 
+    @teams.find {|team| team.team_id == tgs_ratios.min_by {|k, v| v}[0]}.team_name
   end
 
   def most_tackles(season_id)
