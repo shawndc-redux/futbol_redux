@@ -91,6 +91,8 @@ class StatTracker
     teams.each do |gt|
       if !wins.keys.include?(gt.head_coach) && gt.result == "WIN"
         wins[gt.head_coach] = 1
+      elsif !wins.keys.include?(gt.head_coach) && gt.result == ("LOSS" || "TIE")
+        wins[gt.head_coach] = 0
       elsif wins.keys.include?(gt.head_coach) && gt.result == "WIN"
         wins[gt.head_coach] += 1
       end

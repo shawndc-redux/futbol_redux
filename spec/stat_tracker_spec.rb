@@ -185,7 +185,7 @@ RSpec.describe StatTracker do
     	it 'returns Name of the Coach with the best win percentage for the season as a String' do
         expect(@stats.winningest_coach("20122013")).to be_a_instance_of String
         expect(@stats.winningest_coach("20122013")).to eq("Claude Julien")
-        expect(@stats.winningest_coach("20132014")).to eq("Claude Julien")
+        expect(@stats.winningest_coach("20132014")).to eq("Michel Therrien")
         expect(@stats.winningest_coach("20152016")).to eq("Peter DeBoer")
         expect(@stats.winningest_coach("20162017")).to eq("Guy Boucher")
     	end
@@ -194,10 +194,10 @@ RSpec.describe StatTracker do
     describe '#worst_coach' do
     	it 'returns Name of the Coach with the worst win percentage for the season as a	String' do
         expect(@stats.worst_coach("20122013")).to be_a_instance_of String
-        expect(@stats.worst_coach("20122013")).to eq("Claude Julien")
-        expect(@stats.worst_coach("20132014")).to eq("Claude Julien")
+        expect(@stats.worst_coach("20122013")).to eq("John Tortorella")
+        expect(@stats.worst_coach("20132014")).to eq("Michel Therrien")
         expect(@stats.worst_coach("20152016")).to eq("Ken Hitchcock")
-        expect(@stats.worst_coach("20162017")).to eq("Guy Boucher")
+        expect(@stats.worst_coach("20162017")).to eq("Alain Vigneault")
     	end
     end
 
