@@ -179,4 +179,55 @@ RSpec.describe StatTracker do
     	end
     end
   end
+
+  describe 'Season Statistics' do
+    describe '#winningest_coach' do
+    	it 'returns Name of the Coach with the best win percentage for the season as a String' do
+        expect(@stats.winningest_coach("20122013")).to be_a_instance_of String
+        expect(@stats.winningest_coach("20122013")).to eq("Claude Julien")
+        expect(@stats.winningest_coach("20132014")).to eq("Michel Therrien")
+        expect(@stats.winningest_coach("20152016")).to eq("Peter DeBoer")
+        expect(@stats.winningest_coach("20162017")).to eq("Guy Boucher")
+    	end
+    end
+
+    describe '#worst_coach' do
+    	it 'returns Name of the Coach with the worst win percentage for the season as a	String' do
+        expect(@stats.worst_coach("20122013")).to be_a_instance_of String
+        expect(@stats.worst_coach("20122013")).to eq("John Tortorella")
+        expect(@stats.worst_coach("20132014")).to eq("Michel Therrien")
+        expect(@stats.worst_coach("20152016")).to eq("Ken Hitchcock")
+        expect(@stats.worst_coach("20162017")).to eq("Alain Vigneault")
+    	end
+    end
+
+    describe '#most_accurate_team' do
+    	it 'returns Name of the Team with the best ratio of shots to goals for the season as a String' do
+        expect(@stats.most_accurate_team("20122013")).to be_a_instance_of String
+        expect(@stats.most_accurate_team("20132014")).to eq("New York Red Bulls").or(eq("FC Dallas"))
+    	end
+    end
+
+    describe '#least_accurate_team' do
+    	it 'returns Name of the Team with the worst ratio of shots to goals for the season as a	String' do
+        expect(@stats.least_accurate_team("20122013")).to be_a_instance_of String
+        expect(@stats.least_accurate_team("20132014")).to eq("New York Red Bulls").or(eq("FC Dallas"))
+    	end
+
+    end 
+
+    describe '#most_tackles' do
+    	it 'returns Name of the Team with the most tackles in the season as a	String' do
+        expect(@stats.most_tackles("20122013")).to be_a_instance_of String
+        expect(@stats.most_tackles("20132014")).to eq("New York Red Bulls").or(eq("FC Dallas"))
+    	end
+    end
+
+    describe '#fewest_tackles' do
+    	it 'returns Name of the Team with the fewest tackles in the season as a	String' do
+        expect(@stats.fewest_tackles("20122013")).to be_a_instance_of String
+        expect(@stats.fewest_tackles("20132014")).to eq("New York Red Bulls").or(eq("FC Dallas"))
+    	end
+    end
+  end
 end
