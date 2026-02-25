@@ -20,6 +20,8 @@ class StatTracker
     create_game_teams
   end
 
+  # CSV PARSING
+  # *****************************
   def self.from_csv(locations)
     all_data = {}
     locations.each do |file_name, location|
@@ -139,8 +141,4 @@ class StatTracker
 
     @teams.find {|team| team.team_id == teams_tackles.min_by {|k, v| v}[0]}.team_name
   end
-
-  # CSV PARSING
-  # *****************************
-  
 end
